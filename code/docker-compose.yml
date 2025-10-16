@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+ agem-qa-db:
+  image: mysql:5.7
+  restart: unless-stopped
+  environment:
+   MYSQL_ROOT_PASSWORD: Igss.2025
+   MYSQL_DATABASE: agem_qa
+   MYSQL_USER: usr_laravel
+   MYSQL_PASSWORD: Usr.igss.2025
+  ports:
+   - 33099:3306
+  volumes:
+   - ./database/schemas/:/var/lib/mysql
+  networks:
+   agem_qa_net:
+    ipv4_address: 179.22.100.25
+ agem-qa:
+  build:
+   context: ./
+   dockerfile: Dockerfile
+  ports:
+   - 9200:80
+  volumes:
+   - ./code-dev:/var/www
+   - ./code-dev/public:/var/www/html
+  networks:
+   agem_qa_net:
+    ipv4_address: 179.22.100.26
+  depends_on:
+   - agem-qa-db
+volumes:
+ code-qa:
+ database:
+networks:
+ agem_qa_net:
+  driver: bridge
+  ipam:
+   driver: default
+   config:
+    -
+     subnet: 179.22.100.0/24
