@@ -598,6 +598,8 @@ class AppointmentController extends Controller
                     $detalle->save();
                     $cont=$cont+1;
                 }
+
+                $fecha_cita = $request->input('date');
     
                 DB::commit();
     
@@ -608,7 +610,7 @@ class AppointmentController extends Controller
                     endforeach;
     
                     $b = new Bitacora;
-                    $b->action = "Registro de cita para paciente con afiliación: ".$afp;
+                    $b->action = "Registro de cita de fecha ".$fecha_cita." para paciente con afiliación: ".$afp;
                     $b->user_id = Auth::id();
                     $b->save();
     
@@ -940,7 +942,7 @@ class AppointmentController extends Controller
                     if($appointment->save()):                 
                         
                         $b = new Bitacora;
-                        $b->action = "Registro de cita para paciente con afiliación: ".$patient_new->affiliation;
+                        $b->action = "Registro de cita de fecha ".$appointment->date." para paciente con afiliación: ".$patient_new->affiliation;
                         $b->user_id = Auth::id();
                         $b->save();
             

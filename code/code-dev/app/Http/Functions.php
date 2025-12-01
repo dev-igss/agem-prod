@@ -136,7 +136,7 @@
         else:
             return $roles[$id];
         endif;
-    }
+    } 
 
     function getMaterials($mode, $id){
         $roles = [

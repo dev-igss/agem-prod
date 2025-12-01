@@ -14,14 +14,15 @@
                 <div class="col-md-12">
                     <div class="panel shadow">
                         <div class="inside">
-                            {!! Form::open(['url'=>'/admin/reporte/filtrado/fechas']) !!}
+                        <form method="POST" action="{{ url('/admin/reporte/filtrado/fechas') }}">
+                        @csrf
                             <div class="row">
 
                                 <div class="col-md-4">
                                     <label for="name"><strong>Desde:</strong></label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-keyboard"></i></span>
-                                        {!! Form::date('date_in', $date_in, ['class'=>'form-control']) !!}
+                                        <input type="date" class="form-control" name="date_in">
                                     </div>
                                 </div>
 
@@ -29,24 +30,23 @@
                                     <label for="name"><strong>Hasta:</strong></label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-keyboard"></i></span>
-                                        {!! Form::date('date_out', $date_out, ['class'=>'form-control']) !!}
+                                        <input type="date" class="form-control" name="date_out">
                                     </div>
                                 </div>
 
                                 
                                 <div class="col-md-4" style="margin-top: 30px;">
                                     <div class="input-group">
-                                        {!! Form::submit('Filtrar', ['class'=>'btn btn-warning']) !!}
-                                        <a href="{{ url('/admin/reportes') }}" class="btn btn-info">Limpiar</a>
+                                        <button class="btn btn-warning mt-4" type="submit">Filtrar</button>
                                     </div>                  
                                 </div>
                                 
                             </div>
-                            {!! Form::close() !!}
+                            </form>
                         </div>
                     </div>
                 </div>                               
-            </div>           
+            </div>         
         @endif
     </div>
 

@@ -157,7 +157,7 @@
         @endif
     </div>
 
-    <div class="container-fluid mtop16">
+    <!--<div class="container-fluid mtop16">
         @if(kvfj(Auth::user()->permissions, 'report_tecnicos_individual'))
             <div class="panel shadow">
                 <div class="header">
@@ -229,6 +229,8 @@
             </div>           
         @endif
     </div>
+
+    -->
 
     @if(kvfj(Auth::user()->permissions, 'report_dates'))
         <div class="container-fluid mtop16">
