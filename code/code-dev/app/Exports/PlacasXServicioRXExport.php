@@ -77,12 +77,8 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                         ->where('appointments.status', 3) // Solo finalizadas
                         ->where('services.parent_id', $parentId);
                     
-                    if($parentId == 4) $query->where('services.id', '<>', 63); // Excluir unidad externa del bloque apoyo
-
                     $datosMap = $query->groupBy('dia', 'details_appointments.idservice')->get()->groupBy('idservice');
-                    $servicios = Service::where('parent_id', $parentId);
-                    if($parentId == 4) $servicios->where('id', '<>', 63);
-                    $servicios = $servicios->get();
+                    $servicios = Service::where('parent_id', $parentId)->where('status', 1)->get();
 
                     $currentRow = $startRow;
                     foreach($servicios as $srv) {
