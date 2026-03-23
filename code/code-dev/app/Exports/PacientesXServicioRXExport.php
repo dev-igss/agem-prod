@@ -88,7 +88,7 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                     $startSectionRow = $this->currentRow;
 
                     // Query de servicios
-                    $query = Service::query();
+                    $query = Service::where('status', 1)->get();
                     if (isset($sec['id'])) $query->where('id', $sec['id']);
                     if (isset($sec['parent_id'])) $query->where('parent_id', $sec['parent_id']);
                     if (isset($sec['exclude_id'])) $query->where('id', '<>', $sec['exclude_id']);

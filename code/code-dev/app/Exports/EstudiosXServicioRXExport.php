@@ -78,10 +78,10 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
 
                     if($isSingleService) {
                         $query->where('services.id', $parentId);
-                        $servicios = Service::where('id', $parentId)->get();
+                        $servicios = Service::where('id', $parentId)->where('status', 1)->get();
                     } else {
                         $query->where('services.parent_id', $parentId);
-                        $servicios = Service::where('parent_id', $parentId);
+                        $servicios = Service::where('parent_id', $parentId)->where('status', 1)->get();
                         if($parentId == 4) {
                             $query->where('services.id', '<>', 63);
                             $servicios->where('id', '<>', 63);

@@ -172,7 +172,7 @@ ini_set('max_execution_time', 0); ?>
                                     @else
                                         <small><strong>Horario: </strong> Sin Asignar</small><br>
                                     @endif
-                                    <small> @if($a->area) {{ getExamB(null, $a->area) }} @else nulo!! {{$a->area}} @endif - {{ getTypeAppointment(null, $a->type)  }} </small>
+                                    <small> @if($a->area) {{ getExamB(null, $a->area) }} @else nulo!! @endif - {{ getTypeAppointment(null, $a->type)  }} </small>
                                 </td>
                                 <td> 
                                     {{ $a->patient->name.' '.$a->patient->lastname }} <br>
