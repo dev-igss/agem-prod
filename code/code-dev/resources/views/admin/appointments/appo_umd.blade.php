@@ -122,6 +122,7 @@ ini_set('max_execution_time', 0); ?>
                     <thead>
                         <tr>
                             <td><strong> OPCIONES </strong></td>
+                            <td><strong> ID </strong><td>
                             <td><strong> FECHA </strong></td>
                             <td><strong> PACIENTE </strong></td>
                             <td><strong> SERVICIO </strong></td>
@@ -178,6 +179,7 @@ ini_set('max_execution_time', 0); ?>
                                         @endif
                                     </div>
                                 </td>
+                                <td> {{ $a->id }} </td>
                                 <td>
                                     {{ \Carbon\Carbon::parse($a->date)->format('d-m-Y') }} <br>
                                     @if($a->schedule_id != NULL)

@@ -58,6 +58,7 @@
                                     <td><strong>OPCIONES</strong></td>
                                     <td><strong>NOMBRE</strong></td>
                                     <td><strong>UNIDAD HOSPITALARIA</strong></td>
+                                    <td><strong>ESTADO</strong></td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,6 +79,13 @@
                                         </td>
                                         <td>{{$env->name}}</td>
                                         <td>{{$env->unit->name}}</td>
+                                        <td>
+                                            @if($env->status == '1')
+                                                <small><strong style="color:green; ">Activo</strong></small>
+                                            @else
+                                                <small><strong style="color:red; ">Inactivo</strong></small>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
 

@@ -55,6 +55,7 @@
                             <tr>
                                 <td><strong>OPCIONES</strong></td>
                                 <td><strong>NOMBRE</strong></td>
+                                <td><strong>ESTADO</strong></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,6 +71,13 @@
                                         </div>
                                     </td>
                                     <td>{{ $service->name }}</td>
+                                    <td>
+                                            @if($service->status == '1')
+                                                <small><strong style="color:green; ">Activo</strong></small>
+                                            @else
+                                                <small><strong style="color:red; ">Inactivo</strong></small>
+                                            @endif
+                                        </td>
                                 </tr>
                             @endforeach                            
                         </tbody>
