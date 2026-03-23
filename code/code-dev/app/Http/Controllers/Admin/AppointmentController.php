@@ -696,7 +696,7 @@ class AppointmentController extends Controller
     
                     DB::beginTransaction();
     
-                    $servicio = Service::with(['parent'])->where('id', $request->get('idservice')[0])->get();
+                    $servicio = Service::with(['parent'])->where('id', $request->get('idservice')[0])->where('status',1)->get();
     
                     foreach($servicio as $ser):
                         $solicitante = $ser->parent->name;
