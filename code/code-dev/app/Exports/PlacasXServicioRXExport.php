@@ -81,7 +81,6 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
 
                     $datosMap = $query->groupBy('dia', 'details_appointments.idservice')->get()->groupBy('idservice');
                     $servicios = Service::where('parent_id', $parentId)->where('status', 1)->get();
-                    if($parentId == 4) $servicios->where('id', '<>', 63);
                     $servicios = $servicios->get();
 
                     $currentRow = $startRow;
