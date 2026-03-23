@@ -73,7 +73,7 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
                         ->whereMonth('appointments.date', $this->mes)
-                        ->whereYear('appointments.year', $this->year)
+                        ->whereYear('appointments.date', $this->year)
                         ->where('appointments.status', 3);
 
                     if($isSingleService) {
