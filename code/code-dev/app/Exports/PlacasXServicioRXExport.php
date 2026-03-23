@@ -14,7 +14,7 @@ use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class PlacasXServicioExport implements FromView, WithEvents, WithTitle
+class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
 {
     public $mes;
     public $year;
