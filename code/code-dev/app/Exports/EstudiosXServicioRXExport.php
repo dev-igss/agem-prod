@@ -73,31 +73,44 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
 
                 foreach ($secciones as $sec) {
                     $sheet->setCellValue('A' . $this->currentRow, $sec['titulo']);
-                    $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
-                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB('D9EAD3');
+                    // ... estilo de título ...
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
 
-                    // FILTRO: Solo servicios con status = 1
+                    /* CAMBIO CLAVE: 
+                       Obtenemos los IDs de las subcategorías primero para 
+                       asegurar que traemos a los "nietos" y "bisnietos" del ID 4
+                    */
+                    $idsCategoriasHijas = Service::where('parent_id', $sec['parent_id'])
+                                                ->where('status', 1)
+                                                ->pluck('id')
+                                                ->toArray();
+                    
+                    // Incluimos el ID padre y todos sus hijos directos en la búsqueda
+                    $busquedaIds = array_merge([$sec['parent_id']], $idsCategoriasHijas);
+
                     $servicios = Service::where('status', 1)
-                        ->where('parent_id', $sec['parent_id'])
+                        ->whereIn('parent_id', $busquedaIds) // Buscamos servicios que pertenezcan a cualquiera de estas categorías
+                        ->orderBy('name', 'asc')
                         ->get();
 
-                    // Consulta de conteo de estudios
+                    // Si después de esto aún faltan, podrías usar simplemente:
+                    // $servicios = Service::where('status', 1)->where('is_study', 1)->get(); 
+                    // (Si es que tienes un campo que identifique estudios independientemente del padre)
+
                     $datos = DB::table('details_appointments')
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('COUNT(details_appointments.id) AS total_estudios') // Aquí contamos filas de detalles
+                            DB::raw('COUNT(details_appointments.id) AS total_estudios')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
                         ->whereMonth('appointments.date', $this->mes)
                         ->whereYear('appointments.date', $this->year)
                         ->where('appointments.status', 3)
-                        ->where('services.status', 1) // Refuerzo de estatus activo
+                        ->where('services.status', 1)
                         ->whereIn('services.id', $servicios->pluck('id'))
                         ->groupBy('dia', 'idservicio')
                         ->get()

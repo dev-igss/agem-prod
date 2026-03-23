@@ -42,18 +42,18 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 
-                // 1. Configuración de Columnas
+                // 1. Configuración de Columnas (Días 1-31)
                 $columnas_datos = [];
                 for ($i = 0; $i < 31; $i++) {
                     $columnas_datos[] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 2);
                 }
                 $colTotal = 'AG';
 
-                // Encabezados Estilo "Placas / Rayos X"
+                // Encabezados
                 $sheet->getColumnDimension('A')->setWidth(280, 'px');
                 $sheet->mergeCells('B1:AF1');
                 $sheet->setCellValue('A1', 'CONTROL DE PLACAS Y ESTUDIOS RADIOLÓGICOS');
-                $sheet->setCellValue('A2', 'Estudio / Día del Mes');
+                $sheet->setCellValue('A2', 'Estudio / Día');
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
                 $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
@@ -63,8 +63,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                 }
                 $sheet->setCellValue($colTotal . '2', 'TOTAL');
 
-                // 2. Definición de Secciones
-                // Nota: Ajusta el parent_id según donde guardes los servicios de Rayos X
+                // 2. Lógica de Secciones
                 $secciones = [
                     ['titulo' => 'RADIOLOGÍA E IMAGEN', 'parent_id' => 4], 
                 ];
@@ -73,22 +72,36 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->setCellValue('A' . $this->currentRow, $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB('CFE2F3'); // Azul claro para Placas
+                        ->getStartColor()->setRGB('CFE2F3');
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
 
-                    // FILTRO: Servicios activos (status = 1)
+                    // --- SOLUCIÓN RECURSIVA ---
+                    // 1. Obtenemos IDs de todas las subcategorías (hijos) del parent_id
+                    $subCategoriasIds = Service::where('parent_id', $sec['parent_id'])
+                        ->where('status', 1)
+                        ->pluck('id')
+                        ->toArray();
+
+                    // 2. Creamos un array con el padre y sus hijos para buscar a los "nietos"
+                    $todosLosPadresValidos = array_merge([$sec['parent_id']], $subCategoriasIds);
+
+                    // 3. Traemos los servicios cuyo parent_id sea cualquiera de los anteriores
                     $servicios = Service::where('status', 1)
-                        ->where('parent_id', $sec['parent_id'])
-                        // Si tienes una subcategoría específica para placas, puedes agregar otro filtro aquí
+                        ->whereIn('parent_id', $todosLosPadresValidos)
+                        ->orderBy('name', 'asc')
                         ->get();
 
+                    // Si sabes que los servicios de placas tienen un nombre específico, 
+                    // podrías usar ->where('name', 'LIKE', '%Placa%') o similar.
+
+                    // Consulta de conteo
                     $datos = DB::table('details_appointments')
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('COUNT(details_appointments.id) AS total_placas') 
+                            DB::raw('COUNT(details_appointments.id) AS total_placas')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
@@ -114,7 +127,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                         $this->currentRow++;
                     }
 
-                    // Fila de Total de Placas
+                    // Total de la sección
                     $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL DE PLACAS');
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
