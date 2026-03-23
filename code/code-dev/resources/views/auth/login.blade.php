@@ -15,7 +15,7 @@
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <label for="ibm"><strong>IBM:</strong></label>
+                <label for="ibm"><strong>usuario:</strong></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-address-card"></i></div>
