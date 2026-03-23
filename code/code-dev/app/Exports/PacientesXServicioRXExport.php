@@ -18,7 +18,7 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
 {
     public $mes;
     public $year;
-    private $currentRow = 3; // Empezamos en la fila 3 después de los encabezados
+    private $currentRow = 3; 
 
     public function __construct($mes, $year)
     {
@@ -28,7 +28,6 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
 
     public function view(): View
     {
-        // El contenido real se genera en AfterSheet para mayor control
         return view('admin.appointments.reports.prueba', ['data' => []]);
     }
 
@@ -42,16 +41,15 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $daysInMonth = Carbon::create($this->year, $this->mes)->daysInMonth;
                 
-                // 1. Configuración de Columnas (A = Servicio, B-AF = Días, AG = Total)
+                // 1. Configuración de Columnas
                 $columnas_datos = [];
                 for ($i = 0; $i < 31; $i++) {
                     $columnas_datos[] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 2);
                 }
                 $colTotal = 'AG';
 
-                // 2. Estilos base y Encabezados
+                // Estilos de Encabezado
                 $sheet->getColumnDimension('A')->setWidth(250, 'px');
                 $sheet->mergeCells('B1:AF1');
                 $sheet->setCellValue('A1', 'PACIENTES POR SERVICIO');
@@ -59,14 +57,13 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
                 $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-                // Números de días en la fila 2
                 foreach ($columnas_datos as $index => $col) {
                     $sheet->getColumnDimension($col)->setWidth(35, 'px');
                     $sheet->setCellValue($col . '2', $index + 1);
                 }
                 $sheet->setCellValue($colTotal . '2', 'TOTAL');
 
-                // 3. Procesar Secciones
+                // 2. Definición de Secciones Dinámicas
                 $secciones = [
                     ['titulo' => 'HOSPITALIZACIÓN', 'parent_id' => 1],
                     ['titulo' => 'CONSULTA EXTERNA', 'parent_id' => 2],
@@ -78,7 +75,7 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                 $filasSubtotales = [];
 
                 foreach ($secciones as $sec) {
-                    // Título de sección (opcional si quieres separadores)
+                    // Título de Sección
                     $sheet->setCellValue('A' . $this->currentRow, $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
@@ -87,14 +84,15 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
 
                     $startSectionRow = $this->currentRow;
 
-                    // Query de servicios
-                    $query = Service::where('status', 1)->get();
+                    // --- CONSULTA DE SERVICIOS CON STATUS = 1 ---
+                    $query = Service::where('status', 1); // <--- Condicional de status = 1
+                    
                     if (isset($sec['id'])) $query->where('id', $sec['id']);
                     if (isset($sec['parent_id'])) $query->where('parent_id', $sec['parent_id']);
                     if (isset($sec['exclude_id'])) $query->where('id', '<>', $sec['exclude_id']);
                     $servicios = $query->get();
 
-                    // Query de datos
+                    // --- CONSULTA DE DATOS ---
                     $datos = DB::table('details_appointments')
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
@@ -106,6 +104,7 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                         ->whereMonth('appointments.date', $this->mes)
                         ->whereYear('appointments.date', $this->year)
                         ->where('appointments.status', 3)
+                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
                         ->whereIn('services.id', $servicios->pluck('id'))
                         ->groupBy('dia', 'idservicio')
                         ->get()
@@ -120,12 +119,11 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                                 $sheet->setCellValue($col . $this->currentRow, $registro->total_pacientes);
                             }
                         }
-                        // Total Horizontal por Servicio
                         $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
                         $this->currentRow++;
                     }
 
-                    // Fila de Subtotal de la sección
+                    // Fila de Subtotal
                     $sheet->setCellValue('A' . $this->currentRow, 'SUB-TOTAL ' . $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     
@@ -134,10 +132,10 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                     }
                     
                     $filasSubtotales[] = $this->currentRow;
-                    $this->currentRow += 2; // Espacio entre secciones
+                    $this->currentRow += 2; 
                 }
 
-                // 4. Gran Total Final
+                // 3. Gran Total Final
                 $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
                 $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                 foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
@@ -145,22 +143,13 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->setCellValue($col . $this->currentRow, $sumFormula);
                 }
 
-                // 5. Estilos Finales (Bordes y Alineación)
+                // 4. Estilos Finales
                 $rangoFinal = "A1:AG" . $this->currentRow;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['rgb' => '000000'],
-                        ],
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                    ],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                // Protección y congelado
                 $sheet->setShowGridlines(false);
                 $sheet->freezePane('B3');
                 $sheet->getProtection()->setSheet(true);
