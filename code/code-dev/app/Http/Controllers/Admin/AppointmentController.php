@@ -180,8 +180,10 @@ class AppointmentController extends Controller
         $servicios_restringidos = ['75','78','79','80','82','83','84','87','88','89','94','95','96','97','98','99','100','101','102','103','104'];
         $services = Service::where('type','1')
             ->where('unit_id', '1')
-            ->whereNotIn('id', ['75','78','79','80','82','83','84','87','88','89','94','95','96','97','98','99','100','101','102','103','104'])
+            ->where('status', '1')
             ->get(); 
+            //->whereNotIn('id', ['75','78','79','80','82','83','84','87','88','89','94','95','96','97','98','99','100','101','102','103','104'])
+            
         $studies = Studie::all();
         $schedules = Schedule::all();
         $setting = Setting::all();
