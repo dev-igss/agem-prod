@@ -14,7 +14,7 @@ class ServiceController extends Controller
 
     public function getHome(){
 
-        $environment = Service::where('parent_id', '0')->orderby('id','Asc')->get();
+        $environment = Service::where('parent_id', '0')->where('status', '1')->orderby('id','Asc')->get();
         $units = Unit::all();
             
 
@@ -97,7 +97,7 @@ class ServiceController extends Controller
     //Servicios
     public function getServicesGeneralServices($id){
         $environment = Service::findOrFail($id);
-        $services = Service::where('parent_id', $id)->get();
+        $services = Service::where('parent_id', $id)->where('status', '1')->get();
         $id = $id;
 
         $data = [
