@@ -173,7 +173,7 @@ class ReportController extends Controller
             ->where('appointments.status', 3)
             ->where('services.status', 1)
             ->groupBy('appointments.date', 'services.id')
-            ->get();*/
+            ->get();
 
         $datos = DB::table('details_appointments')
             ->select(
@@ -182,20 +182,20 @@ class ReportController extends Controller
                 'appointments.service_id'
             )
             ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
-            ->whereMonth('appointments.date', 03) // Usa directamente $mes
+            ->whereMonth('appointments.date', 0) // Usa directamente $mes
             ->whereYear('appointments.date', 2026)
             ->where('appointments.status', 3)
             ->where('appointments.area', 0)
             ->get();
 
 
-        return $datos;
+        return $datos;*/
 
-        /*$mes = $request->get('month_rx');
+        $mes = $request->get('month_rx');
         $month_in= getMonths(null, $mes);
         $year = $request->get('year_rx');
 
-        $conteo_peliculas_11_14 = DB::table('details_appointments')
+        /*$conteo_peliculas_11_14 = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
                         DB::raw('SUM(materials_appointments.amount) AS total_material'))
@@ -209,7 +209,7 @@ class ReportController extends Controller
                     ->groupBy(DB::raw('Day(appointments.date)'), 'materials_appointments.material')
                     ->get();
         
-        return $conteo_peliculas_11_14 ;
+        return $conteo_peliculas_11_14 ;*/
 
         $b = new Bitacora;
         $b->action = "Generación de reporte mensual de RX del mes: ".$month_in.' - '.$year;
@@ -221,7 +221,7 @@ class ReportController extends Controller
             'year' => $year
         ];
 
-        return Excel::download(new EstadisticasRXExport($data), 'Reporte RX '.$month_in.' - '.$year.'.xlsx');*/
+        return Excel::download(new EstadisticasRXExport($data), 'Reporte RX '.$month_in.' - '.$year.'.xlsx');
     }
 
     public function postReportUSGEstadistica(Request $request){
