@@ -179,7 +179,10 @@ class ReportController extends Controller
             ->select(
                 '*'
             )
-            ->where('details_appointments.idappointment','=',256701)
+            ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
+            ->whereMonth('appointments.date', 01) // Usa directamente $mes
+            ->whereYear('appointments.date', 2026)
+            ->where('appointments.status', 3)
 
             ->get();
 
