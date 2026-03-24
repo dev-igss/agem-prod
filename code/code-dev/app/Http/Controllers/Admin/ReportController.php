@@ -170,9 +170,6 @@ class ReportController extends Controller
             ->join('services', 'services.id', '=', 'details_appointments.idservice')
             ->whereMonth('appointments.date', $mes) // Usa directamente $mes
             ->whereYear('appointments.date', $year)
-            ->where('appointments.status', 3)
-            ->where('services.status', 1)
-            ->groupBy('dia', 'idservicio')
             ->get();
 
 
