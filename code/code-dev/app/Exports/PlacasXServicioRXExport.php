@@ -163,7 +163,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->setCellValue('A'.$rowPlaca, $label);
                     if($materialesData->has($idMat)) {
                         foreach($materialesData->get($idMat) as $reg) {
-                            $sheet->setCellValue($columnas[$reg->dia - 1].$rowPlaca, $reg->total);
+                            $sheet->setCellValue($columnas_datos[$reg->dia - 1].$rowPlaca, $reg->total);
                         }
                     }
                     $sheet->setCellValue('AG'.$rowPlaca, "=SUM(B{$rowPlaca}:AF{$rowPlaca})");
