@@ -97,13 +97,15 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
+                            DB::raw('SUM(materials_appointments.amount) AS total')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
+                        ->join('materials_appointments', 'materials_appointments.idappointment', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
                         ->whereMonth('appointments.date', $this->mes)
                         ->whereYear('appointments.date', $this->year)
                         ->where('appointments.status', 3)
+                        ->where('appointments.area', 0)
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
                         ->whereIn('services.id', $servicios->pluck('id'))
                         ->groupBy('dia', 'idservicio')
@@ -116,7 +118,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                         if ($datos->has($srv->id)) {
                             foreach ($datos[$srv->id] as $registro) {
                                 $col = $columnas_datos[$registro->dia - 1];
-                                $sheet->setCellValue($col . $this->currentRow, $registro->total_pacientes);
+                                $sheet->setCellValue($col . $this->currentRow, $registro->total);
                             }
                         }
                         $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
