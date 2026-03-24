@@ -177,7 +177,9 @@ class ReportController extends Controller
 
         $datos = DB::table('details_appointments')
             ->select(
-                '*'
+                'appointments.date',
+                'appointments.patient_id',
+                'appointments.service_id'
             )
             ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
             ->whereMonth('appointments.date', 01) // Usa directamente $mes
