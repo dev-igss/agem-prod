@@ -33,7 +33,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
 
     public function title(): string
     {
-        return 'Pacientes x Servicio';
+        return 'Placas x Servicio';
     }
 
     public function registerEvents(): array
