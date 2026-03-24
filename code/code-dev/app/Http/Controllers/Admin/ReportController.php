@@ -152,11 +152,36 @@ class ReportController extends Controller
     }
 
     public function postReportRXEstadistica(Request $request){
+
+
         $mes = $request->get('month_rx');
         $month_in= getMonths(null, $mes);
         $year = $request->get('year_rx');
 
-        /*$conteo_peliculas_11_14 = DB::table('details_appointments')
+        $datos = DB::table('details_appointments')
+                        ->select(
+                            DB::raw('Day(appointments.date) AS dia'),
+                            'services.id AS idservicio',
+                            DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
+                        )
+                        ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
+                        ->join('services', 'services.id', '=', 'details_appointments.idservice')
+                        ->whereMonth('appointments.date', $mes)
+                        ->whereYear('appointments.date', $year)
+                        ->where('appointments.status', 3)
+                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
+                        ->whereIn('services.id', $servicios->pluck('id'))
+                        ->groupBy('dia', 'idservicio')
+                        ->get()
+                        ->groupBy('idservicio');
+
+        return $datos;
+
+        /*$mes = $request->get('month_rx');
+        $month_in= getMonths(null, $mes);
+        $year = $request->get('year_rx');
+
+        $conteo_peliculas_11_14 = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
                         DB::raw('SUM(materials_appointments.amount) AS total_material'))
@@ -170,7 +195,7 @@ class ReportController extends Controller
                     ->groupBy(DB::raw('Day(appointments.date)'), 'materials_appointments.material')
                     ->get();
         
-        return $conteo_peliculas_11_14 ;*/
+        return $conteo_peliculas_11_14 ;
 
         $b = new Bitacora;
         $b->action = "Generación de reporte mensual de RX del mes: ".$month_in.' - '.$year;
@@ -182,7 +207,7 @@ class ReportController extends Controller
             'year' => $year
         ];
 
-        return Excel::download(new EstadisticasRXExport($data), 'Reporte RX '.$month_in.' - '.$year.'.xlsx');
+        return Excel::download(new EstadisticasRXExport($data), 'Reporte RX '.$month_in.' - '.$year.'.xlsx');*/
     }
 
     public function postReportUSGEstadistica(Request $request){
