@@ -152,6 +152,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     ->join('appointments', 'appointments.id', '=', 'materials_appointments.idappointment')
                     ->whereMonth('appointments.date', $this->mes)
                     ->whereYear('appointments.date', $this->year)
+                    ->where('appointments.area', 0)
                     ->where('appointments.status', 3)
                     ->groupBy('material', 'dia')
                     ->get()
