@@ -179,6 +179,7 @@ class ReportController extends Controller
             ->select(
                 '*'
             )
+            ->wher('details_appointments.id','=',256701)
 
             ->get();
 
