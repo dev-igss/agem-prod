@@ -160,7 +160,7 @@ class ReportController extends Controller
         // DEBUG: Verifica que estos valores sean lo que esperas (ej: "3" y "2026")
         // dd($mes, $year); 
 
-        $datos = DB::table('details_appointments')
+        /*$datos = DB::table('details_appointments')
             ->select(
                 DB::raw('Day(appointments.date) AS dia'),
                 'services.id AS idservicio',
@@ -173,6 +173,13 @@ class ReportController extends Controller
             ->where('appointments.status', 3)
             ->where('services.status', 1)
             ->groupBy('appointments.date', 'services.id')
+            ->get();*/
+
+        $datos = DB::table('details_appointments')
+            ->select(
+                '*'
+            )
+
             ->get();
 
 
