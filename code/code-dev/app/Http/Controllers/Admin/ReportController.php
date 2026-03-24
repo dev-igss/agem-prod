@@ -187,8 +187,6 @@ class ReportController extends Controller
             ->whereYear('appointments.date', 2026)
             ->where('appointments.status', 3)
             ->where('appointments.area', 0)
-            ->groupBy('appointments.date', 'details_appointments.idservice')
-
             ->get();
 
 
