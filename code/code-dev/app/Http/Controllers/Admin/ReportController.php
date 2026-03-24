@@ -176,7 +176,7 @@ class ReportController extends Controller
             ->get();
 
 
-        return $mes.'-'.$year;
+        return $datos;
 
         /*$mes = $request->get('month_rx');
         $month_in= getMonths(null, $mes);
