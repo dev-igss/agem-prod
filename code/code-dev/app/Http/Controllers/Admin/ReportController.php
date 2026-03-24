@@ -183,7 +183,7 @@ class ReportController extends Controller
             )
             ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
             ->whereMonth('appointments.date', 01) // Usa directamente $mes
-            ->whereYear('appointments.date', 2025)
+            ->whereYear('appointments.date', 2026)
             ->where('appointments.status', 3)
             ->where('appointments.area', 0)
             ->get();
