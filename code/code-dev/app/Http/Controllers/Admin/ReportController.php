@@ -170,7 +170,6 @@ class ReportController extends Controller
                         ->whereYear('appointments.date', $year)
                         ->where('appointments.status', 3)
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
-                        ->whereIn('services.id', Service::where('status', 1)->pluck('id'))
                         ->groupBy('dia', 'idservicio')
                         ->get()
                         ->groupBy('idservicio');
