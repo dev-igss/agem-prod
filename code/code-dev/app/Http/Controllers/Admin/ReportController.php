@@ -177,12 +177,17 @@ class ReportController extends Controller
 
         $datos = DB::table('details_appointments')
             ->select(
-                '*'
+                'appointments.date AS dia',
+                'appointments.id AS id_cita',
+                'details_appointments.id AS id_detalle_cita',
+                'details_appointments.idservice AS id_servicio'
             )
             ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
             ->whereMonth('appointments.date', 01) // Usa directamente $mes
             ->whereYear('appointments.date', 2026)
             ->where('appointments.status', 3)
+            ->where('appointments.area', 0)
+            ->groupBy('appointments.date', 'details_appointments.idservice')
 
             ->get();
 
