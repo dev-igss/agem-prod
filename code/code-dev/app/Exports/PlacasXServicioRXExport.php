@@ -177,6 +177,12 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
+                 $rangoFinal = "A156:AG" . $rowPlaca;
+                $sheet->getStyle($rangoFinal)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
                 $sheet->setShowGridlines(false);
                 $sheet->freezePane('B3');
                 $sheet->getProtection()->setSheet(true);
