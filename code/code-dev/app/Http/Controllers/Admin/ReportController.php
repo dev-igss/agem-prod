@@ -175,7 +175,8 @@ class ReportController extends Controller
             ->groupBy('dia', 'idservicio')
             ->get();
 
-        dd($datos);
+
+        return $datos;
 
         /*$mes = $request->get('month_rx');
         $month_in= getMonths(null, $mes);
