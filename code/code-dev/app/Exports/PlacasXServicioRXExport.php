@@ -52,7 +52,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                 // Estilos de Encabezado
                 $sheet->getColumnDimension('A')->setWidth(250, 'px');
                 $sheet->mergeCells('B1:AF1');
-                $sheet->setCellValue('A1', 'PACIENTES POR SERVICIO');
+                $sheet->setCellValue('A1', 'PLACAS POR SERVICIO');
                 $sheet->setCellValue('A2', 'Días');
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
                 $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
