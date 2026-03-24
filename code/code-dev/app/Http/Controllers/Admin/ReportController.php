@@ -166,7 +166,7 @@ class ReportController extends Controller
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
-                        ->whereMonth('appointments.date', $mes)
+                        ->whereMonth('appointments.date', $month_in)
                         ->whereYear('appointments.date', $year)
                         ->where('appointments.status', 3)
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
