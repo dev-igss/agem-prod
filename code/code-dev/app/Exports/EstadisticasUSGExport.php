@@ -35,8 +35,8 @@ class EstadisticasUSGExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new PlacasXServicioUSGExport($this->mes, $this->year),
-            new EstudiosXServicioUSGExport($this->mes, $this->year),
+            //new PlacasXServicioUSGExport($this->mes, $this->year), 
+            //new EstudiosXServicioUSGExport($this->mes, $this->year),
             new PacientesXServicioUSGExport($this->mes, $this->year),
         ];
     }
