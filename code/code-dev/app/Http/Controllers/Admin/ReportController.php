@@ -179,7 +179,7 @@ class ReportController extends Controller
             ->select(
                 '*'
             )
-            ->where('details_appointments.id','=',256701)
+            ->where('details_appointments.idappointment','=',256701)
 
             ->get();
 
