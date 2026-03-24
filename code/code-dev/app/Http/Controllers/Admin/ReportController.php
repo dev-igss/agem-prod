@@ -155,26 +155,27 @@ class ReportController extends Controller
 
 
         $mes = $request->get('month_rx');
-        $month_in= getMonths(null, $mes);
         $year = $request->get('year_rx');
 
-        $datos = DB::table('details_appointments')
-                        ->select(
-                            DB::raw('Day(appointments.date) AS dia'),
-                            'services.id AS idservicio',
-                            DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
-                        )
-                        ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
-                        ->join('services', 'services.id', '=', 'details_appointments.idservice')
-                        ->whereMonth('appointments.date', $month_in)
-                        ->whereYear('appointments.date', $year)
-                        ->where('appointments.status', 3)
-                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
-                        ->whereIn('services.id', Service::where('status', 1)->pluck('id'))
-                        ->groupBy('dia', 'idservicio')
-                        ->get();
+        // DEBUG: Verifica que estos valores sean lo que esperas (ej: "3" y "2026")
+        // dd($mes, $year); 
 
-        return $datos;
+        $datos = DB::table('details_appointments')
+            ->select(
+                DB::raw('Day(appointments.date) AS dia'),
+                'services.id AS idservicio',
+                DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
+            )
+            ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
+            ->join('services', 'services.id', '=', 'details_appointments.idservice')
+            ->whereMonth('appointments.date', $mes) // Usa directamente $mes
+            ->whereYear('appointments.date', $year)
+            ->where('appointments.status', 3)
+            ->where('services.status', 1)
+            ->groupBy('dia', 'idservicio')
+            ->get();
+
+        dd($datos);
 
         /*$mes = $request->get('month_rx');
         $month_in= getMonths(null, $mes);
