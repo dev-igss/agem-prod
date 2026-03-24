@@ -18,7 +18,7 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
 {
     public $mes;
     public $year;
-    private $currentRow = 3;
+    private $currentRow = 3; 
 
     public function __construct($mes, $year)
     {
@@ -33,7 +33,7 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
 
     public function title(): string
     {
-        return 'Reporte de Estudios';
+        return 'Estudios x Servicio';
     }
 
     public function registerEvents(): array
@@ -42,18 +42,18 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 
-                // 1. Configuración de Columnas (Días 1-31)
+                // 1. Configuración de Columnas
                 $columnas_datos = [];
                 for ($i = 0; $i < 31; $i++) {
                     $columnas_datos[] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 2);
                 }
                 $colTotal = 'AG';
 
-                // Encabezados
-                $sheet->getColumnDimension('A')->setWidth(280, 'px');
+                // Estilos de Encabezado
+                $sheet->getColumnDimension('A')->setWidth(250, 'px');
                 $sheet->mergeCells('B1:AF1');
-                $sheet->setCellValue('A1', 'CONTROL DE PLACAS Y ESTUDIOS RADIOLÓGICOS');
-                $sheet->setCellValue('A2', 'Estudio / Día');
+                $sheet->setCellValue('A1', 'ESTUDIOS POR SERVICIO');
+                $sheet->setCellValue('A2', 'Días');
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
                 $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
@@ -63,52 +63,48 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
                 }
                 $sheet->setCellValue($colTotal . '2', 'TOTAL');
 
-                // 2. Lógica de Secciones
+                // 2. Definición de Secciones Dinámicas
                 $secciones = [
-                    ['titulo' => 'RADIOLOGÍA E IMAGEN', 'parent_id' => 4], 
+                    ['titulo' => 'HOSPITALIZACIÓN', 'parent_id' => 1],
+                    ['titulo' => 'CONSULTA EXTERNA', 'parent_id' => 2],
+                    ['titulo' => 'EMERGENCIAS', 'parent_id' => 3],
+                    ['titulo' => 'SERVICIOS A OTRAS UNIDADES', 'id' => 63],
+                    ['titulo' => 'SERVICIOS DE APOYO', 'parent_id' => 4, 'exclude_id' => 63],
                 ];
 
+                $filasSubtotales = [];
+
                 foreach ($secciones as $sec) {
+                    // Título de Sección
                     $sheet->setCellValue('A' . $this->currentRow, $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB('CFE2F3');
+                        ->getStartColor()->setRGB('E9E9E9');
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
 
-                    // --- SOLUCIÓN RECURSIVA ---
-                    // 1. Obtenemos IDs de todas las subcategorías (hijos) del parent_id
-                    $subCategoriasIds = Service::where('parent_id', $sec['parent_id'])
-                        ->where('status', 1)
-                        ->pluck('id')
-                        ->toArray();
+                    // --- CONSULTA DE SERVICIOS CON STATUS = 1 ---
+                    $query = Service::where('status', 1); // <--- Condicional de status = 1
+                    
+                    if (isset($sec['id'])) $query->where('id', $sec['id']);
+                    if (isset($sec['parent_id'])) $query->where('parent_id', $sec['parent_id']);
+                    if (isset($sec['exclude_id'])) $query->where('id', '<>', $sec['exclude_id']);
+                    $servicios = $query->get();
 
-                    // 2. Creamos un array con el padre y sus hijos para buscar a los "nietos"
-                    $todosLosPadresValidos = array_merge([$sec['parent_id']], $subCategoriasIds);
-
-                    // 3. Traemos los servicios cuyo parent_id sea cualquiera de los anteriores
-                    $servicios = Service::where('status', 1)
-                        ->whereIn('parent_id', $todosLosPadresValidos)
-                        ->orderBy('name', 'asc')
-                        ->get();
-
-                    // Si sabes que los servicios de placas tienen un nombre específico, 
-                    // podrías usar ->where('name', 'LIKE', '%Placa%') o similar.
-
-                    // Consulta de conteo
+                    // --- CONSULTA DE DATOS ---
                     $datos = DB::table('details_appointments')
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('COUNT(details_appointments.id) AS total_placas')
+                            DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
                         ->whereMonth('appointments.date', $this->mes)
                         ->whereYear('appointments.date', $this->year)
                         ->where('appointments.status', 3)
-                        ->where('services.status', 1)
+                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
                         ->whereIn('services.id', $servicios->pluck('id'))
                         ->groupBy('dia', 'idservicio')
                         ->get()
@@ -120,24 +116,35 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
                         if ($datos->has($srv->id)) {
                             foreach ($datos[$srv->id] as $registro) {
                                 $col = $columnas_datos[$registro->dia - 1];
-                                $sheet->setCellValue($col . $this->currentRow, $registro->total_placas);
+                                $sheet->setCellValue($col . $this->currentRow, $registro->total_pacientes);
                             }
                         }
                         $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
                         $this->currentRow++;
                     }
 
-                    // Total de la sección
-                    $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL DE PLACAS');
+                    // Fila de Subtotal
+                    $sheet->setCellValue('A' . $this->currentRow, 'SUB-TOTAL ' . $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
+                    
                     foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
                         $sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
                     }
-                    $this->currentRow += 2;
+                    
+                    $filasSubtotales[] = $this->currentRow;
+                    $this->currentRow += 2; 
                 }
 
-                // 3. Estética final
-                $rangoFinal = "A1:AG" . ($this->currentRow - 2);
+                // 3. Gran Total Final
+                $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
+                $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
+                foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
+                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
+                    $sheet->setCellValue($col . $this->currentRow, $sumFormula);
+                }
+
+                // 4. Estilos Finales
+                $rangoFinal = "A1:AG" . $this->currentRow;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -146,6 +153,7 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
                 $sheet->setShowGridlines(false);
                 $sheet->freezePane('B3');
                 $sheet->getProtection()->setSheet(true);
+                $sheet->getStyle('B1:AF1')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
             },
         ];
     }
