@@ -145,6 +145,31 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->setCellValue($col . $this->currentRow, $sumFormula);
                 }
 
+                // 3. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
+                $sheet->setCellValue('A155', 'UTILIZADAS DEL TAMAÑO');
+                $materialesData = DB::table('materials_appointments')
+                    ->select('material', DB::raw('Day(appointments.date) as dia'), DB::raw('SUM(amount) as total'))
+                    ->join('appointments', 'appointments.id', '=', 'materials_appointments.idappointment')
+                    ->whereMonth('appointments.date', $this->mes)
+                    ->whereYear('appointments.date', $this->year)
+                    ->where('appointments.status', 3)
+                    ->groupBy('material', 'dia')
+                    ->get()
+                    ->groupBy('material');
+
+                $labelsPlacas = [0 => '8*10', 1 => '10*12', 2 => '11*14', 3 => '14*17'];
+                $rowPlaca = 156;
+                foreach($labelsPlacas as $idMat => $label) {
+                    $sheet->setCellValue('A'.$rowPlaca, $label);
+                    if($materialesData->has($idMat)) {
+                        foreach($materialesData->get($idMat) as $reg) {
+                            $sheet->setCellValue($columnas[$reg->dia - 1].$rowPlaca, $reg->total);
+                        }
+                    }
+                    $sheet->setCellValue('AG'.$rowPlaca, "=SUM(B{$rowPlaca}:AF{$rowPlaca})");
+                    $rowPlaca++;
+                }
+
                 // 4. Estilos Finales
                 $rangoFinal = "A1:AG" . $this->currentRow;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
