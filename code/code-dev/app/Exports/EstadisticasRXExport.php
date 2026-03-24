@@ -37,7 +37,7 @@ class EstadisticasRXExport implements WithMultipleSheets
         return [
             new PlacasXServicioRXExport($this->mes, $this->year),
             new EstudiosXServicioRXExport($this->mes, $this->year),
-            //new PacientesXServicioRXExport($this->mes, $this->year),
+            new PacientesXServicioRXExport($this->mes, $this->year),
         ];
     }
 }
