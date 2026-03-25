@@ -36,7 +36,7 @@ class EstadisticasDMOExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new PapelXServicioDMOExport($this->mes, $this->year),
+            new PapelXServicioDMOExport($this->mes, $this->year), 
             new EstudiosXServicioDMOExport($this->mes, $this->year),
             new PacientesXServicioDMOExport($this->mes, $this->year),
         ];
