@@ -14,7 +14,7 @@ use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
+class PacientesXServicioMAMOExport implements FromView, WithEvents, WithTitle
 {
     public $mes;
     public $year;

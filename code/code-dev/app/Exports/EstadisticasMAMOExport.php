@@ -35,7 +35,7 @@ class EstadisticasMAMOExport implements WithMultipleSheets
     {
         return [
             new PlacasXServicioMAMOExport($this->mes, $this->year),
-            new EstudiosXServicioMAMOExport($this->mes, $this->year),
+            new EstudiosXServicioMAMOExport($this->mes, $this->year), 
             new PacientesXServicioMAMOExport($this->mes, $this->year),
         ];
     }
