@@ -145,7 +145,10 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->setCellValue($col . $this->currentRow, $sumFormula);
                 }
 
-                // 3. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
+                $rowPlaca = $this->currentRow+2;
+
+
+                // 4. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
                 $sheet->setCellValue('A155', 'UTILIZADAS DEL TAMAÑO');
                 $materialesData = DB::table('materials_appointments')
                     ->select('material', DB::raw('Day(appointments.date) as dia'), DB::raw('SUM(amount) as total'))
@@ -159,7 +162,6 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     ->groupBy('material');
 
                 $labelsPlacas = [0 => '8*10', 1 => '10*12', 2 => '11*14', 3 => '14*17'];
-                $rowPlaca = 156;
                 foreach($labelsPlacas as $idMat => $label) {
                     $sheet->setCellValue('A'.$rowPlaca, $label);
                     if($materialesData->has($idMat)) {
@@ -178,7 +180,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                 $rangoFinal = "A156:AG" . $rowPlaca;
+                 $rangoFinal = "A".($this->currentRow+2).":AG" . $rowPlaca;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
