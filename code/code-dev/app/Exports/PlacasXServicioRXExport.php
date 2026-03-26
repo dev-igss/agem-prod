@@ -81,6 +81,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()->setRGB('E9E9E9');
                     $sheet->mergeCells('A' . $this->currentRow . ':AG' . $this->currentRow);
+                    $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
@@ -150,11 +151,12 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
 
 
                 // 4. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
-                $sheet->setCellValue('A'.$rowPlaca, 'UTILIZADAS DEL TAMAÑO');
+                $sheet->setCellValue('A'.$rowPlaca, 'PLACAS UTILIZADAS POR TAMAÑO');
                 $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()->setRGB('E9E9E9');
-                    $sheet->mergeCells('A' . $rowPlaca . ':AG' . $rowPlaca);
+                $sheet->mergeCells('A' . $rowPlaca . ':AG' . $rowPlaca);
+                $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFont()->setBold(true);
                 $materialesData = DB::table('materials_appointments')
                     ->select('material', DB::raw('Day(appointments.date) as dia'), DB::raw('SUM(amount) as total'))
                     ->join('appointments', 'appointments.id', '=', 'materials_appointments.idappointment')
