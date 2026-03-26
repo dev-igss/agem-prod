@@ -161,6 +161,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     ->get()
                     ->groupBy('material');
 
+                $rowPlaca++;
                 $labelsPlacas = [0 => '8*10', 1 => '10*12', 2 => '11*14', 3 => '14*17'];
                 foreach($labelsPlacas as $idMat => $label) {
                     $sheet->setCellValue('A'.$rowPlaca, $label);
@@ -174,10 +175,10 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                 }
 
                 // 4. Gran Total Placas
-                $sheet->setCellValue('A' . $rowPlaca, 'TOTAL GENERAL');
+                $sheet->setCellValue('A' . $rowPlaca, 'TOTAL GENERAL PLACAS');
                 $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFont()->setBold(true);
                 foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
+                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $rowPlaca));
                     $sheet->setCellValue($col . $rowPlaca, $sumFormula);
                 }
 
