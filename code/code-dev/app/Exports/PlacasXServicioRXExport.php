@@ -80,6 +80,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()->setRGB('E9E9E9');
+                    $sheet->getDelegate()->mergeCells('A' . $this->currentRow . ':AG' . $this->currentRow);
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
@@ -150,6 +151,10 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
 
                 // 4. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
                 $sheet->setCellValue('A'.$rowPlaca, 'UTILIZADAS DEL TAMAÑO');
+                $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('E9E9E9');
+                    $sheet->getDelegate()->mergeCells('A' . $rowPlaca . ':AG' . $rowPlaca);
                 $materialesData = DB::table('materials_appointments')
                     ->select('material', DB::raw('Day(appointments.date) as dia'), DB::raw('SUM(amount) as total'))
                     ->join('appointments', 'appointments.id', '=', 'materials_appointments.idappointment')
