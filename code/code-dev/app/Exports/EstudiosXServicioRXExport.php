@@ -80,6 +80,8 @@ class EstudiosXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()->setRGB('E9E9E9');
+                    $sheet->mergeCells('A' . $this->currentRow . ':AG' . $this->currentRow);
+                    $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
