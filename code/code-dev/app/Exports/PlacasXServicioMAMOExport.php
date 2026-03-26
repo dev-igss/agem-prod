@@ -80,6 +80,8 @@ class PlacasXServicioMAMOExport implements FromView, WithEvents, WithTitle
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()->setRGB('E9E9E9');
+                    $sheet->mergeCells('A' . $this->currentRow . ':AG' . $this->currentRow);
+                    $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
@@ -158,10 +160,34 @@ class PlacasXServicioMAMOExport implements FromView, WithEvents, WithTitle
                     ->get()
                     ->groupBy('material');
 
-                $labelsPlacas = [0 => '8*10', 1 => '10*12', 2 => '11*14', 3 => '14*17'];
-                $rowPlaca = 156;
+                $rowPlaca = $this->currentRow+2;
+
+
+                // 4. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
+                $sheet->setCellValue('A'.$rowPlaca, 'PLACAS UTILIZADAS POR TAMAÑO');
+                $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('E9E9E9');
+                $sheet->mergeCells('A' . $rowPlaca . ':AG' . $rowPlaca);
+                $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFont()->setBold(true);
+                $materialesData = DB::table('materials_appointments')
+                    ->select('material', DB::raw('Day(appointments.date) as dia'), DB::raw('SUM(amount) as total'))
+                    ->join('appointments', 'appointments.id', '=', 'materials_appointments.idappointment')
+                    ->whereMonth('appointments.date', $this->mes)
+                    ->whereYear('appointments.date', $this->year)
+                    ->where('appointments.area', 3)
+                    ->where('appointments.status', 3)
+                    ->groupBy('material', 'dia')
+                    ->get()
+                    ->groupBy('material');
+
+                $rowPlaca++;
+                $labelsPlacas = [0 => '8*10', 1 => '10*12'];
+                $filasASumar = [];
+
                 foreach($labelsPlacas as $idMat => $label) {
                     $sheet->setCellValue('A'.$rowPlaca, $label);
+                    $filasASumar[] = $rowPlaca;
                     if($materialesData->has($idMat)) {
                         foreach($materialesData->get($idMat) as $reg) {
                             $sheet->setCellValue($columnas_datos[$reg->dia - 1].$rowPlaca, $reg->total);
@@ -171,14 +197,22 @@ class PlacasXServicioMAMOExport implements FromView, WithEvents, WithTitle
                     $rowPlaca++;
                 }
 
-                // 4. Estilos Finales
+                // 4. Gran Total Placas
+                $sheet->setCellValue('A' . $rowPlaca, 'TOTAL GENERAL PLACAS');
+                $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFont()->setBold(true);
+                foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
+                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasASumar));
+                    $sheet->setCellValue($col . $rowPlaca, $sumFormula);
+                }
+
+                // 5. Estilos Finales
                 $rangoFinal = "A1:AG" . $this->currentRow;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                 $rangoFinal = "A156:AG" . $rowPlaca;
+                $rangoFinal = "A".($this->currentRow+2).":AG" . $rowPlaca;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
