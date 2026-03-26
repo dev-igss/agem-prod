@@ -55,8 +55,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 $sheet->setCellValue('A1', 'ESTUDIOS POR SERVICIO');
                 $sheet->setCellValue('A2', 'Días');
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
-                $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->mergeCells('A1:AG2');
+                $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);                
 
                 foreach ($columnas_datos as $index => $col) {
                     $sheet->getColumnDimension($col)->setWidth(35, 'px');

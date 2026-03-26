@@ -56,7 +56,6 @@ class EstudiosXServicioUSGExport implements FromView, WithEvents, WithTitle
                 $sheet->setCellValue('A2', 'Días');
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
                 $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->mergeCells('A1:AG2');
 
                 foreach ($columnas_datos as $index => $col) {
                     $sheet->getColumnDimension($col)->setWidth(35, 'px');
