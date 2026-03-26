@@ -56,8 +56,7 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                 $sheet->setCellValue('A2', 'Días');
                 $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
                 $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('A1:AG2')->getFont()->setBold(true);
-                $sheet->getStyle('A1:AG2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->mergeCells('A1:AG2');
 
 
                 foreach ($columnas_datos as $index => $col) {
@@ -83,6 +82,8 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()->setRGB('E9E9E9');
+                    $sheet->mergeCells('A' . $this->currentRow . ':AG' . $this->currentRow);
+                    $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     $this->currentRow++;
 
                     $startSectionRow = $this->currentRow;
