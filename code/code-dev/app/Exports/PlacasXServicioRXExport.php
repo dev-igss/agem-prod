@@ -149,7 +149,7 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
 
 
                 // 4. SECCIÓN TAMAÑO DE PLACAS (Consulta Maestra de Materiales)
-                $sheet->setCellValue('A155', 'UTILIZADAS DEL TAMAÑO');
+                $sheet->setCellValue('A'.$rowPlaca, 'UTILIZADAS DEL TAMAÑO');
                 $materialesData = DB::table('materials_appointments')
                     ->select('material', DB::raw('Day(appointments.date) as dia'), DB::raw('SUM(amount) as total'))
                     ->join('appointments', 'appointments.id', '=', 'materials_appointments.idappointment')
@@ -173,7 +173,15 @@ class PlacasXServicioRXExport implements FromView, WithEvents, WithTitle
                     $rowPlaca++;
                 }
 
-                // 4. Estilos Finales
+                // 4. Gran Total Placas
+                $sheet->setCellValue('A' . $rowPlaca, 'TOTAL GENERAL');
+                $sheet->getStyle('A' . $rowPlaca . ':AG' . $rowPlaca)->getFont()->setBold(true);
+                foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
+                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
+                    $sheet->setCellValue($col . $rowPlaca, $sumFormula);
+                }
+
+                // 5. Estilos Finales
                 $rangoFinal = "A1:AG" . $this->currentRow;
                 $sheet->getStyle($rangoFinal)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']]],
