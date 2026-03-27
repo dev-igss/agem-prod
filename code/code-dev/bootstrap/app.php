@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+            'user_perm' => \App\Http\Middleware\CheckUserPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

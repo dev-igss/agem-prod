@@ -21,7 +21,7 @@ Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login'
 
 require __DIR__.'/auth.php';
 
-Route::prefix('admin')->group(function () {
+Route::middleware(['auth'])->prefix('admin')->group(function () {
     //Dashboard
     Route::get('/dashboard', [DashboardController::class, 'getDashboard'])->name('admin_dashboard');
 
