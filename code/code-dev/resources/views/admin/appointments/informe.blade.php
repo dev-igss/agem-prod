@@ -22,7 +22,7 @@
 
     <body style="font-size: 14px; font-family: 'Roboto Slab', serif;">
         <div style="float: left; margin-top: -25px;" >
-            <img src="{{url('/img/logo igss.png')}}" alt="" width="80" height="80"/>
+            <img src="{{url('/img/logo igss.jpg')}}" alt="" width="80" height="80"/>
         </div>
         <div style="text-align: center; margin-top: 0px; margin-left: -1000px;">
             <span><strong> INFORME AL PATRONO </strong> </span>
