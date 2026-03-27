@@ -7,7 +7,7 @@
 
         <div class="header">
             <a href="{{url('/')}}">
-                <img src="{{url('/img/logo igss.jpg')}}" alt="">
+                <img src="{{url('/img/logo igss.png')}}" alt="">
             </a>
         </div>
 
