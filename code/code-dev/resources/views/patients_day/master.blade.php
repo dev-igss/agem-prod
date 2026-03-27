@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="{{ url('/static/css/style.css?v='.time()) }}">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="{{url('/static/fontawesome/css/all.min.css')}}">
-	<link rel="shortcut icon" href="{{ url('/img/Isotipo.ico') }}" type="image/x-icon">
+	<link rel="shortcut icon" href="{{ url('/img/logo-igss.ico') }}" type="image/x-icon">
 
 	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

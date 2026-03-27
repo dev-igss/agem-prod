@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{url('/static/fontawesome/css/all.min.css')}}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    <link rel="shortcut icon" href="{{ url('/img/Isotipo.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url('/img/logo-igss.ico') }}" type="image/x-icon">
    
 
 </head>
