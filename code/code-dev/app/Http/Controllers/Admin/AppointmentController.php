@@ -1377,9 +1377,14 @@ class AppointmentController extends Controller
 
     public function getAppointmentInforme($id){
         $appointment = Appointment::findOrFail($id);
+        $path = public_path('img/logo igss.jpg');
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
         $data = [
-            'appointment' => $appointment
+            'appointment' => $appointment,
+            'base64' => $base64
         ];
 
         $pdf = PDF::loadView('admin.appointments.informe',$data)->setPaper('a4', 'portrait');
