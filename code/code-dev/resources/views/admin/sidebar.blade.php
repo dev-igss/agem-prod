@@ -1,7 +1,7 @@
 <div class="sidebar shadow">
     <div class="section-top">
         <div class="logo">
-            <img src="{{url('/static/imagenes/Isotipo.png')}}" class="img-fluid">
+            <img src="{{url('/img/logo igss.jpg')}}" class="img-fluid">
         </div>
 
         <div class="user">
