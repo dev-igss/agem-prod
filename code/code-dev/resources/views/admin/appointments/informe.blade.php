@@ -37,7 +37,7 @@
             <span ><strong> Unidad: </strong>{{ $appointment->patient->unit->name }}  </span>            
         </div>
         <div style="float: right; margin-top: 50px; margin-right: -300px;  width: 500px; height: 25px; font-size: 16px;" >
-            <span ><strong> Fecha: </strong>{{ Str::title( \Carbon\Carbon::parse($appointment->date)->isoFormat('DD MMMM YYYY', 'es') ) }}  </span>                 
+            <span ><strong> Fecha: </strong>{{ Str::title( \Carbon\Carbon::parse($appointment->date)->translatedFormat('d F Y') ) }}  </span>                 
         </div>
         <br><br>
         <div style="float: left; margin-top: 50px; margin-left: -500px;  width: 500px; height: 25px; font-size: 16px;" >
