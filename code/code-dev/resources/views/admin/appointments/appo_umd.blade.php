@@ -122,7 +122,6 @@ ini_set('max_execution_time', 0); ?>
                     <thead>
                         <tr>
                             <td><strong> OPCIONES </strong></td>
-                            <td><strong> ID </strong><td>
                             <td><strong> FECHA </strong></td>
                             <td><strong> PACIENTE </strong></td>
                             <td><strong> SERVICIO </strong></td>
@@ -179,9 +178,6 @@ ini_set('max_execution_time', 0); ?>
                                         @endif
                                     </div>
                                 </td>
-
-                                <td> {{ $a->id }} </td>
-
                                 <td>
                                     {{ \Carbon\Carbon::parse($a->date)->format('d-m-Y') }} <br>
                                     @if($a->schedule_id != NULL)
@@ -191,15 +187,12 @@ ini_set('max_execution_time', 0); ?>
                                     @endif
                                     <small> @if($a->area) {{ getExamB(null, $a->area) }} @else nulo!! @endif - {{ getTypeAppointment(null, $a->type)  }} </small>
                                 </td>
-
                                 <td> 
                                     {{ $a->patient->name.' '.$a->patient->lastname }} <br>
                                     <span>AF. {{ $a->patient->affiliation }}</span> <br>                                    
                                     <small>Expediente. {{ $a->num_study }}</small>
                                 </td>
-
                                 <td>{{ $a->service }} </td>
-
                                 <td> 
                                     
                                     @foreach($a->details as $det)
@@ -213,7 +206,6 @@ ini_set('max_execution_time', 0); ?>
 
                                     @endforeach
                                 </td>
-
                                 <td>
                                     @switch($a->status)
                                         @case(0)
@@ -257,7 +249,6 @@ ini_set('max_execution_time', 0); ?>
                                         </p>
                                     @endif
                                 </td>
-                                
                             </tr>
                         @endforeach
                     </tbody>
