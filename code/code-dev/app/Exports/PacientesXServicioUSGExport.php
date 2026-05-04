@@ -111,7 +111,8 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
                         ->whereIn('services.id', $servicios->pluck('id'))
                         ->groupBy('dia', 'idservicio')
-                        ->get();
+                        ->get()
+                        ->groupBy('idservicio');
 
                     foreach ($servicios as $srv) {
                         $sheet->setCellValue('A' . $this->currentRow, $srv->name);
