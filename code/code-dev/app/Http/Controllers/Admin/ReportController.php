@@ -230,7 +230,7 @@ class ReportController extends Controller
         $month_in= getMonths(null, $mes);
         $year = $request->get('year_usg');
 
-        $servicios = Service::where('status', 1);
+        /*$servicios = Service::where('status', 1);
 
         $datos = DB::table('details_appointments')
                         ->select(
@@ -250,9 +250,9 @@ class ReportController extends Controller
                         ->get()
                         ->groupBy('idservicio');
 
-        return $datos;
+        return $datos;*/
 
-        /*$b = new Bitacora;
+        $b = new Bitacora;
         $b->action = "Generación de reporte mensual de USG del mes: ".$month_in.' - '.$year;
         $b->user_id = Auth::id();
         $b->save();
@@ -262,7 +262,7 @@ class ReportController extends Controller
             'year' => $year
         ];
 
-        return Excel::download(new EstadisticasUSGExport($data), 'Reporte USG '.$month_in.' - '.$year.'.xlsx');*/
+        return Excel::download(new EstadisticasUSGExport($data), 'Reporte USG '.$month_in.' - '.$year.'.xlsx');
     }
 
     public function postReportMAMOEstadistica(Request $request){
