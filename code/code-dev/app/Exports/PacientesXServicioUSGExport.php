@@ -83,7 +83,7 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                         ->getStartColor()->setRGB('E9E9E9');
                     $sheet->mergeCells('A' . $this->currentRow . ':AG' . $this->currentRow);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
-                    $this->currentRow++;
+                    $this->currentRow++; 
 
                     $startSectionRow = $this->currentRow;
 
@@ -100,7 +100,7 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
+                            DB::raw('COUNT(appointments.patient_id) AS total_pacientes')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')

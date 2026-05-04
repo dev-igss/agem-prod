@@ -110,7 +110,7 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                         ->where('appointments.area', 0)
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
                         ->whereIn('services.id', $servicios->pluck('id'))
-                        ->groupBy('dia', 'idservicio')
+                        ->groupBy('dia', 'idservicio') 
                         ->get()
                         ->groupBy('idservicio');
 

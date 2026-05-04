@@ -95,7 +95,7 @@ class PlacasXServicioUSGExport implements FromView, WithEvents, WithTitle
                     $servicios = $query->get();
 
                     // --- CONSULTA DE DATOS ---
-                    $datos = DB::table('details_appointments')
+                    $datos = DB::table('details_appointments') 
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
