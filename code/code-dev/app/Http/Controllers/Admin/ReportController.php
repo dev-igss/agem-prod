@@ -245,7 +245,7 @@ class ReportController extends Controller
                         ->where('appointments.status', 3)
                         ->where('appointments.area', 2)
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
-                        ->whereIn('services.id', 137)
+                        ->whereIn('services.id',[137])
                         ->groupBy('dia', 'idservicio')
                         ->get()
                         ->groupBy('idservicio');
