@@ -250,7 +250,7 @@ class ReportController extends Controller
                         ->get()
                         ->groupBy('idservicio');
 
-
+        return $datos;
 
         /*$b = new Bitacora;
         $b->action = "Generación de reporte mensual de USG del mes: ".$month_in.' - '.$year;
