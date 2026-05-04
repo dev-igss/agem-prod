@@ -232,23 +232,7 @@ class ReportController extends Controller
 
         $servicios = Service::where('status', 1);
 
-        $datos = DB::table('details_appointments')
-                        ->select(
-                            DB::raw('Day(appointments.date) AS dia'),
-                            'services.id AS idservicio',
-                            DB::raw('COUNT(appointments.patient_id) AS total_pacientes')
-                        )
-                        ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
-                        ->join('services', 'services.id', '=', 'details_appointments.idservice')
-                        ->whereMonth('appointments.date', $mes)
-                        ->whereYear('appointments.date', $year)
-                        ->where('appointments.status', 3)
-                        ->where('appointments.area', 2)
-                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
-                        ->whereIn('services.id', )
-                        ->groupBy('dia', 'idservicio')
-                        ->get()
-                        ->groupBy('idservicio');
+        
 
         return $servicios->pluck('id');
 
