@@ -230,26 +230,31 @@ class ReportController extends Controller
         $month_in= getMonths(null, $mes);
         $year = $request->get('year_usg');
 
-        /*$conteo_pacientes_hosp = DB::table('details_appointments')
-            ->select(
-                DB::raw('Day(appointments.date) AS dia'), 
-                DB::raw('services.id AS idservicio'), 
-                DB::raw('services.name AS servicio'),  
-                DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes'))
-            ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
-            ->join('services', 'services.id', '=', 'details_appointments.idservice')
-            ->whereDay('appointments.date', 2)
-            ->whereMonth('appointments.date', 2)
-            ->whereYear('appointments.date', 2023)
-            ->where('appointments.area', 2) 
-            ->where('appointments.status', 3)
-            ->where('services.parent_id', 1)
-            ->groupBy(DB::raw('Day(appointments.date)'), DB::raw('services.id'))            
-            ->get();
-            
-        return $conteo_pacientes_hosp;*/
+        $servicios = Service::where('status', 1);
 
-        $b = new Bitacora;
+        $datos = DB::table('details_appointments')
+                        ->select(
+                            DB::raw('Day(appointments.date) AS dia'),
+                            'services.id AS idservicio',
+                            DB::raw('COUNT(appointments.patient_id) AS total_pacientes')
+                        )
+                        ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
+                        ->join('services', 'services.id', '=', 'details_appointments.idservice')
+                        ->whereMonth('appointments.date', $mes)
+                        ->whereYear('appointments.date', $year)
+                        ->where('appointments.status', 3)
+                        ->where('appointments.area', 2)
+                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
+                        ->whereIn('services.id', $servicios->pluck('id'))
+                        ->groupBy('dia', 'idservicio')
+                        ->get()
+                        ->groupBy('idservicio');
+
+        return $datos;
+
+
+
+        /*$b = new Bitacora;
         $b->action = "Generación de reporte mensual de USG del mes: ".$month_in.' - '.$year;
         $b->user_id = Auth::id();
         $b->save();
@@ -259,7 +264,7 @@ class ReportController extends Controller
             'year' => $year
         ];
 
-        return Excel::download(new EstadisticasUSGExport($data), 'Reporte USG '.$month_in.' - '.$year.'.xlsx');
+        return Excel::download(new EstadisticasUSGExport($data), 'Reporte USG '.$month_in.' - '.$year.'.xlsx');*/
     }
 
     public function postReportMAMOEstadistica(Request $request){
