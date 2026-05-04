@@ -100,7 +100,7 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('COUNT(appointments.patient_id) AS total_pacientes')
+                            DB::raw('SUM(appointments.patient_id) AS total_pacientes')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
