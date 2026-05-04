@@ -6,7 +6,7 @@
         @if(kvfj(Auth::user()->permissions, 'report_month_areas'))
             <div class="panel shadow">
                 <div class="header">
-                    <h2 class="title"><i class="fa fa-filter"></i><strong> Cuadres Mensuales </strong></h2>
+                    <h2 class="title"><i class="fa fa-filter"></i><strong> Cuadres Mensuales prueba </strong></h2>
                 </div>
             </div>
 
