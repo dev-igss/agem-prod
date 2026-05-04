@@ -128,24 +128,24 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
                     }
 
                     // Fila de Subtotal
-                    //$sheet->setCellValue('A' . $this->currentRow, 'SUB-TOTAL ' . $sec['titulo']);
-                    //$sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
+                    $sheet->setCellValue('A' . $this->currentRow, 'SUB-TOTAL ' . $sec['titulo']);
+                    $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     
-                    /*foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                        $sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
+                    foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
+                        //$sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
                     }
                     
-                    $filasSubtotales[] = $this->currentRow;*/
+                    $filasSubtotales[] = $this->currentRow;
                     $this->currentRow += 2; 
                 }
 
                 // 3. Gran Total Final
-                /*$sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
+                $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
                 $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                 foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
-                    $sheet->setCellValue($col . $this->currentRow, $sumFormula);
-                }*/
+                    //$sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
+                    //$sheet->setCellValue($col . $this->currentRow, $sumFormula);
+                }
 
                 
                 // 4. Estilos Finales

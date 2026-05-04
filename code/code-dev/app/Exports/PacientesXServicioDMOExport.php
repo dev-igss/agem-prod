@@ -122,7 +122,7 @@ class PacientesXServicioDMOExport implements FromView, WithEvents, WithTitle
                                 $sheet->setCellValue($col . $this->currentRow, $registro->total_pacientes);
                             }
                         }
-                        $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
+                        //$sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
                         $this->currentRow++;
                     }
 
@@ -131,7 +131,7 @@ class PacientesXServicioDMOExport implements FromView, WithEvents, WithTitle
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     
                     foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                        $sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
+                        //$sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
                     }
                     
                     $filasSubtotales[] = $this->currentRow;
@@ -142,8 +142,8 @@ class PacientesXServicioDMOExport implements FromView, WithEvents, WithTitle
                 $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
                 $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                 foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
-                    $sheet->setCellValue($col . $this->currentRow, $sumFormula);
+                    //$sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
+                    //$sheet->setCellValue($col . $this->currentRow, $sumFormula);
                 }
 
                 // 4. Estilos Finales
