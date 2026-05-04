@@ -100,7 +100,7 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
                             'services.id AS idservicio',
-                            DB::raw('SUM(appointments.patient_id) AS total_pacientes')
+                            DB::raw('COUNT(DISTINCT appointments.patient_id) AS total_pacientes')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
                         ->join('services', 'services.id', '=', 'details_appointments.idservice')
@@ -111,8 +111,7 @@ class PacientesXServicioUSGExport implements FromView, WithEvents, WithTitle
                         ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
                         ->whereIn('services.id', $servicios->pluck('id'))
                         ->groupBy('dia', 'idservicio')
-                        ->get()
-                        ->groupBy('idservicio');
+                        ->get();
 
                     foreach ($servicios as $srv) {
                         $sheet->setCellValue('A' . $this->currentRow, $srv->name);
