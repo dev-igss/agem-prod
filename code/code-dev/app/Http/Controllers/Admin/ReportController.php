@@ -322,7 +322,7 @@ class ReportController extends Controller
                     ->groupBy(DB::raw('Day(appointments.date)'), DB::raw('services.id'))
                     ->get();
 
-        return $servicios_coex;
+        return $conteo_pacientes_coex;
 
 
          
