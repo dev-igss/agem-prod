@@ -53,7 +53,7 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
         return [
             AfterSheet::class    => function(AfterSheet $event){
                 /* Configuracion de la hoja */
-                $event->getSheet()->getDelegate()->getStyle('A1:AG112')->applyFromArray(
+                $event->getSheet()->getDelegate()->getStyle('A1:AG147')->applyFromArray(
                     array(
                         'borders' => [
                             'allBorders' => [
@@ -346,7 +346,7 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
                 $event->sheet->setCellValue('A'.$row_count1, 'SUB-TOTAL');
                 for($i = 0; $i < count($columnas_datos); $i++){
-                    $event->sheet->setCellValue($columnas_datos[$i].'20', '=SUM('.$columnas_datos[$i].'3:'.$columnas_datos[$i].'19)');
+                    $event->sheet->setCellValue($columnas_datos[$i].'32', '=SUM('.$columnas_datos[$i].'3:'.$columnas_datos[$i].'31)');
                 }
 
                 /* Servicios de Consulta Externa */
@@ -575,7 +575,7 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
                 $event->sheet->setCellValue('A'.$row_count2, 'SUB-TOTAL');
                 for($i = 0; $i < count($columnas_datos); $i++){
-                    $event->sheet->setCellValue($columnas_datos[$i].'55', '=SUM('.$columnas_datos[$i].'21:'.$columnas_datos[$i].'54)');
+                    $event->sheet->setCellValue($columnas_datos[$i].'73', '=SUM('.$columnas_datos[$i].'33:'.$columnas_datos[$i].'72)');
                 }
 
                 /* Servicios de Emergencias */
@@ -807,7 +807,7 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
                 $event->sheet->setCellValue('A'.$row_count3, 'SUB-TOTAL');
                 for($i = 0; $i < count($columnas_datos); $i++){
-                    $event->sheet->setCellValue($columnas_datos[$i].'64', '=SUM('.$columnas_datos[$i].'57:'.$columnas_datos[$i].'63)');
+                    $event->sheet->setCellValue($columnas_datos[$i].'87', '=SUM('.$columnas_datos[$i].'75:'.$columnas_datos[$i].'86)');
                 }
 
                 /* Servicios de Unidades Externas */
@@ -1039,7 +1039,7 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
                 $event->sheet->setCellValue('A'.$row_count4, 'SUB-TOTAL');
                 for($i = 0; $i < count($columnas_datos); $i++){
-                    $event->sheet->setCellValue($columnas_datos[$i].'67', '=SUM('.$columnas_datos[$i].'66:'.$columnas_datos[$i].'66)');
+                    $event->sheet->setCellValue($columnas_datos[$i].'89', '=SUM('.$columnas_datos[$i].'89:'.$columnas_datos[$i].'89)');
                 }
 
                 /* Servicios de Apoyo */
@@ -1276,14 +1276,14 @@ class PapelXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
                 $event->sheet->setCellValue('A'.$row_count5, 'SUB-TOTAL');
                 for($i = 0; $i < count($columnas_datos); $i++){
-                    $event->sheet->setCellValue($columnas_datos[$i].'111', '=SUM('.$columnas_datos[$i].'70:'.$columnas_datos[$i].'110)');
+                    $event->sheet->setCellValue($columnas_datos[$i].'146', '=SUM('.$columnas_datos[$i].'92:'.$columnas_datos[$i].'145)');
                 }
 
                 /*Gran Total */
                 $row_count6 = $row_count5+1;
                 $event->sheet->setCellValue('A'.$row_count6  , 'TOTAL');
                 for($i = 0; $i < count($columnas_datos); $i++){
-                    $event->sheet->setCellValue($columnas_datos[$i].$row_count6 , '='.$columnas_datos[$i].'20+'.$columnas_datos[$i].'55+'.$columnas_datos[$i].'64+'.$columnas_datos[$i].'67+'.$columnas_datos[$i].'111');
+                    $event->sheet->setCellValue($columnas_datos[$i].$row_count6 , '='.$columnas_datos[$i].'32+'.$columnas_datos[$i].'73+'.$columnas_datos[$i].'87+'.$columnas_datos[$i].'89+'.$columnas_datos[$i].'146');
                 }
 
                 /*Total por servicios y subtotales*/
