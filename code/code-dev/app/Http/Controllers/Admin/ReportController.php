@@ -304,7 +304,8 @@ class ReportController extends Controller
         $month_in = getMonths(null, $mes);
         $year = $request->get('year_dmo');
 
-        /*$conteo_pacientes_coex = DB::table('details_appointments')
+        $servicios_coex = Service::where('parent_id', 2)->where('status', 1)->get();
+                $conteo_pacientes_coex = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
                         DB::raw('services.id AS idservicio'), 
@@ -317,14 +318,17 @@ class ReportController extends Controller
                     ->where('appointments.area', 4)
                     ->where('appointments.status', 3)
                     ->where('services.parent_id', 2)
+                    ->where('services.status', 1)
                     ->groupBy(DB::raw('Day(appointments.date)'), DB::raw('services.id'))
                     ->get();
 
-        return $conteo_pacientes_coex;*/
+        return $servicios_coex;
+
+
          
        /* $consulta_prueba = Service::where('parent_id', 2)->count();
 
-        return $consulta_prueba;*/
+        return $consulta_prueba;
 
         $b = new Bitacora;
         $b->action = "Generación de reporte mensual de DMO del mes: ".$month_in.' - '.$year;
@@ -336,7 +340,7 @@ class ReportController extends Controller
             'year' => $year
         ];
 
-        return Excel::download(new EstadisticasDMOExport($data), 'Reporte DMO '.$month_in.' - '.$year.'.xlsx');
+        return Excel::download(new EstadisticasDMOExport($data), 'Reporte DMO '.$month_in.' - '.$year.'.xlsx');*/
     }
 
     public function postReportTecnicoIndividual(Request $request){
