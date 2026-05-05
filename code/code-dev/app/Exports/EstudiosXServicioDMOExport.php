@@ -120,7 +120,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
 
                 /* Servicios de Hospitalizacion */
-                $servicios_hosp = Service::where('parent_id', 1)->where('services.status', 1)->get();
+                $servicios_hosp = Service::where('parent_id', 1)->where('status', 1)->get();
                 $conteo_estudios_hosp = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
@@ -348,7 +348,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 }
 
                 /* Servicios de Consulta Externa */
-                $servicios_coex = Service::where('parent_id', 2)->where('services.status', 1)->get();
+                $servicios_coex = Service::where('parent_id', 2)->where('status', 1)->get();
                 $conteo_estudios_coex = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
@@ -580,7 +580,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 $row_separador1 = $row_count2+1;
                 $event->sheet->getDelegate()->mergeCells('A'.$row_separador1.':AG'.$row_separador1);
                 $event->sheet->setCellValue('A'.$row_separador1 , 'EMERGENCIAS');
-                $servicios_emer = Service::where('parent_id', 3)->where('services.status', 1)->get();
+                $servicios_emer = Service::where('parent_id', 3)->where('status', 1)->get();
                 $conteo_estudios_emer = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
@@ -811,7 +811,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 $row_separador2 = $row_count3+1;
                 $event->sheet->getDelegate()->mergeCells('A'.$row_separador2.':AG'.$row_separador2);
                 $event->sheet->setCellValue('A'.$row_separador2 , 'SERVICIOS A OTRAS UNIDADES');
-                $servicios_unidades_externas = Service::where('id', 63)->where('services.status', 1)->get();
+                $servicios_unidades_externas = Service::where('id', 63)->where('status', 1)->get();
                 $conteo_estudios_unidades_externas = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
@@ -1045,7 +1045,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 $row_separador4 = $row_count4+2;
                 $event->sheet->getDelegate()->mergeCells('A'.$row_separador4.':AF'.$row_separador4);
                 $event->sheet->setCellValue('A'.$row_separador4 , 'SERVICIOS DE LA UNIDAD');
-                $servicios_apoyo = Service::where('parent_id', 4)->where('id', '<>', 63)->where('services.status', 1)->get();
+                $servicios_apoyo = Service::where('parent_id', 4)->where('id', '<>', 63)->where('status', 1)->get();
                 $conteo_estudios_servicios_apoyo = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
@@ -1284,7 +1284,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                 $event->sheet->getDelegate()->mergeCells('AG1:AG2');
                 $event->sheet->setCellValue('AG1' , 'TOTAL'); 
 
-                for($i=3; $i<113; $i++){
+                for($i=3; $i<147; $i++){
                     $event->sheet->setCellValue('AG'.$i, '=SUM(B'.$i.':AF'.$i.')');
                 }
             },
