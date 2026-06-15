@@ -31,7 +31,7 @@
                     <input type="password" class="form-control" name="password">
                 </div>
 
-                <button class="btn btn-success mt-4" type="submit">Inicar Sesión</button>
+                <button class="btn btn-success mt-4" type="submit">Inicar Sesión - prueba</button>
             </form>
 
             @if(Session::has('message'))
