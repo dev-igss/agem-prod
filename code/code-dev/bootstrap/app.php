@@ -18,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            return redirect()->route('login')->withErrors(['ibm' => 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.']);
+        });
+
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, \Illuminate\Http\Request $request) {
+            return redirect()->route('login');
+        });
     })->create();
     
