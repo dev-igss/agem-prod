@@ -86,19 +86,29 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
 
                     $startSectionRow = $this->currentRow;
 
-                    // --- CONSULTA DE SERVICIOS CON STATUS = 1 ---
-                    $query = Service::where('status', 1); // <--- Condicional de status = 1
-                    
+                    // --- CONSULTA DE SERVICIOS ACTIVOS DE LA SECCIÓN ---
+                    $query = Service::where('status', 1);
+
                     if (isset($sec['id'])) $query->where('id', $sec['id']);
                     if (isset($sec['parent_id'])) $query->where('parent_id', $sec['parent_id']);
                     if (isset($sec['exclude_id'])) $query->where('id', '<>', $sec['exclude_id']);
                     $servicios = $query->get();
 
+                    $activosIds = $servicios->pluck('id');
+
+                    // Servicios inactivos que apuntan (via id_cuadre) a algún activo de esta sección
+                    $inactivosIds = Service::where('status', 0)
+                        ->whereIn('id_cuadre', $activosIds)
+                        ->pluck('id');
+
+                    $todosIds = $activosIds->merge($inactivosIds);
+
                     // --- CONSULTA DE DATOS ---
+                    // Los servicios inactivos se agrupan bajo su id_cuadre (servicio activo destino)
                     $datos = DB::table('details_appointments')
                         ->select(
                             DB::raw('Day(appointments.date) AS dia'),
-                            'services.id AS idservicio',
+                            DB::raw('CASE WHEN services.status = 0 THEN services.id_cuadre ELSE services.id END AS idservicio'),
                             DB::raw('COUNT(details_appointments.id) AS total')
                         )
                         ->join('appointments', 'appointments.id', '=', 'details_appointments.idappointment')
@@ -107,8 +117,7 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                         ->whereYear('appointments.date', $this->year)
                         ->where('appointments.status', 3)
                         ->where('appointments.area', 4)
-                        ->where('services.status', 1) // <--- Refuerzo de status = 1 en el join
-                        ->whereIn('services.id', $servicios->pluck('id'))
+                        ->whereIn('services.id', $todosIds)
                         ->groupBy('dia', 'idservicio')
                         ->get()
                         ->groupBy('idservicio');
@@ -122,28 +131,28 @@ class EstudiosXServicioDMOExport implements FromView, WithEvents, WithTitle
                                 $sheet->setCellValue($col . $this->currentRow, $registro->total);
                             }
                         }
-                        //$sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
+                        $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
                         $this->currentRow++;
                     }
 
                     // Fila de Subtotal
                     $sheet->setCellValue('A' . $this->currentRow, 'SUB-TOTAL ' . $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
-                    
+
                     foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                        //$sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
+                        $sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
                     }
-                    
+
                     $filasSubtotales[] = $this->currentRow;
-                    $this->currentRow += 2; 
+                    $this->currentRow += 2;
                 }
 
                 // 3. Gran Total Final
                 $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
                 $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                 foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
-                    //$sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
-                    //$sheet->setCellValue($col . $this->currentRow, $sumFormula);
+                    $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
+                    $sheet->setCellValue($col . $this->currentRow, $sumFormula);
                 }
 
                 // 4. Estilos Finales
