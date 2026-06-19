@@ -52,11 +52,6 @@ class LoginRequest extends FormRequest
             RateLimiter::clear($this->throttleKey());
         }
 
-    public function throttleKey(): string
-        {
-            return Str::transliterate(Str::lower($this->string('ibm')).'|'.$this->ip());
-        }    
-
     /**
      * Ensure the login request is not rate limited.
      *
