@@ -44,9 +44,6 @@ class LoginRequest extends FormRequest
             if (! Auth::attempt($this->only('ibm', 'password'), $this->boolean('remember'))) {
                 RateLimiter::hit($this->throttleKey());
 
-                throw ValidationException::withMessages([
-                    'ibm' => __('Las credenciales proporcionadas no son correctas.'),
-                ]);
             }
 
             RateLimiter::clear($this->throttleKey());
