@@ -38,12 +38,12 @@
                 <div class="container">
                     <div class="mt-16 alert alert-{{ Session::get('typealert') }}" style="display:none;">
                         {{ Session::get('message') }}
-                        @if( $errors->any() )
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
+                        @if ($errors->any())
+                            <div class="alert alert-danger mt-3">
+                                @foreach ($errors->all() as $error)
+                                    <p>{{ $error }}</p>
                                 @endforeach
-                            </ul>
+                            </div>
                         @endif
                         <script>
                             $('.alert').slideDown();
