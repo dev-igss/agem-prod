@@ -9,7 +9,7 @@ use App\Models\Appointment, App\Models\DetailAppointment, App\Models\Service, Ap
 use DB, PDF, Auth, Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 
-use App\Exports\EstadisticasDMOExport, App\Exports\EstadisticasMAMOExport, App\Exports\EstadisticasUSGExport, App\Exports\EstadisticasRXExport;
+use App\Exports\DMO\EstadisticasDMOExport, App\Exports\MMO\EstadisticasMAMOExport, App\Exports\USG\EstadisticasUSGExport, App\Exports\RX\EstadisticasRXExport;
 
 class ReportController extends Controller
 {
@@ -300,7 +300,7 @@ class ReportController extends Controller
     }
 
     public function postReportDMOEstadistica(Request $request){ 
-        $mes = $request->get('month_dmo');
+        /*$mes = $request->get('month_dmo');
         $month_in = getMonths(null, $mes);
         $year = $request->get('year_dmo');
 
@@ -322,11 +322,11 @@ class ReportController extends Controller
                     ->groupBy(DB::raw('Day(appointments.date)'), DB::raw('services.id'))
                     ->get();
 
-        return $conteo_pacientes_coex;
+        return $conteo_pacientes_coex;*/
 
 
          
-       /* $consulta_prueba = Service::where('parent_id', 2)->count();
+       $consulta_prueba = Service::where('parent_id', 2)->count();
 
         return $consulta_prueba;
 
@@ -340,7 +340,7 @@ class ReportController extends Controller
             'year' => $year
         ];
 
-        return Excel::download(new EstadisticasDMOExport($data), 'Reporte DMO '.$month_in.' - '.$year.'.xlsx');*/
+        return Excel::download(new EstadisticasDMOExport($data), 'Reporte DMO '.$month_in.' - '.$year.'.xlsx');
     }
 
     public function postReportTecnicoIndividual(Request $request){
