@@ -300,11 +300,11 @@ class ReportController extends Controller
     }
 
     public function postReportDMOEstadistica(Request $request){ 
-        /*$mes = $request->get('month_dmo');
+        $mes = $request->get('month_dmo');
         $month_in = getMonths(null, $mes);
         $year = $request->get('year_dmo');
 
-        $servicios_coex = Service::where('parent_id', 2)->where('status', 1)->get();
+        /*$servicios_coex = Service::where('parent_id', 2)->where('status', 1)->get();
                 $conteo_pacientes_coex = DB::table('details_appointments')
                     ->select(
                         DB::raw('Day(appointments.date) AS dia'), 
@@ -325,10 +325,7 @@ class ReportController extends Controller
         return $conteo_pacientes_coex;*/
 
 
-         
-       $consulta_prueba = Service::where('parent_id', 2)->count();
-
-        return $consulta_prueba;
+        
 
         $b = new Bitacora;
         $b->action = "Generación de reporte mensual de DMO del mes: ".$month_in.' - '.$year;
