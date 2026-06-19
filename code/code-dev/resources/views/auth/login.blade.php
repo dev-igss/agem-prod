@@ -34,22 +34,11 @@
                 <button class="btn btn-success mt-4" type="submit">Inicar Sesión</button>
             </form>
 
-            @if(Session::has('message'))
-                <div class="container">
-                    <div class="mt-16 alert alert-{{ Session::get('typealert') }}" style="display:none;">
-                        {{ Session::get('message') }}
-                        @if ($errors->any())
-                            <div class="alert alert-danger mt-3">
-                                @foreach ($errors->all() as $error)
-                                    <p>{{ $error }}</p>
-                                @endforeach
-                            </div>
-                        @endif
-                        <script>
-                            $('.alert').slideDown();
-                            setTimeout(function(){ $('.alert').slideUp(); },10000);
-                        </script>
-                    </div>
+            @if ($errors->any())
+                <div class="alert alert-danger mt-3">
+                    @foreach ($errors->all() as $error)
+                        <p class="mb-0">{{ $error }}</p>
+                    @endforeach
                 </div>
             @endif
 
