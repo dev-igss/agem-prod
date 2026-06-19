@@ -38,17 +38,24 @@ class LoginRequest extends FormRequest
      * @throws \Illuminate\Validation\ValidationException
      */
     public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
+        {
+            $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('ibm', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+            if (! Auth::attempt($this->only('ibm', 'password'), $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
 
-           
+                throw ValidationException::withMessages([
+                    'ibm' => __('Las credenciales proporcionadas no son correctas.'),
+                ]);
+            }
+
+            RateLimiter::clear($this->throttleKey());
         }
 
-        RateLimiter::clear($this->throttleKey());
-    }
+    public function throttleKey(): string
+        {
+            return Str::transliterate(Str::lower($this->string('ibm')).'|'.$this->ip());
+        }    
 
     /**
      * Ensure the login request is not rate limited.
