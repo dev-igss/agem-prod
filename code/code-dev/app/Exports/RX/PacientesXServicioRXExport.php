@@ -140,9 +140,10 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                     $sheet->setCellValue('A' . $this->currentRow, 'SUB-TOTAL ' . $sec['titulo']);
                     $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
                     
-                    foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
+                    foreach ($columnas_datos as $col) {
                         $sheet->setCellValue($col . $this->currentRow, "=SUM({$col}{$startSectionRow}:{$col}" . ($this->currentRow - 1) . ")");
                     }
+                    $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
                     
                     $filasSubtotales[] = $this->currentRow;
                     $this->currentRow += 2; 
@@ -151,10 +152,11 @@ class PacientesXServicioRXExport implements FromView, WithEvents, WithTitle
                 // 3. Gran Total Final
                 $sheet->setCellValue('A' . $this->currentRow, 'TOTAL GENERAL');
                 $sheet->getStyle('A' . $this->currentRow . ':AG' . $this->currentRow)->getFont()->setBold(true);
-                foreach (array_merge($columnas_datos, [$colTotal]) as $col) {
+                foreach ($columnas_datos as $col) {
                     $sumFormula = "=" . implode('+', array_map(fn($f) => "{$col}{$f}", $filasSubtotales));
                     $sheet->setCellValue($col . $this->currentRow, $sumFormula);
                 }
+                $sheet->setCellValue($colTotal . $this->currentRow, "=SUM(B{$this->currentRow}:AF{$this->currentRow})");
 
                 // 4. Estilos Finales
                 $rangoFinal = "A1:AG" . $this->currentRow;
